@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Wellness & Productivity Dashboard</title>
+        <title>FlowState: Mindful Productivity Hub</title>
   <style>
     /* 
       IMPROVEMENT: Added CSS variables for animations and improved color consistency.
@@ -271,6 +271,15 @@
       color: var(--accent);
     }
     
+    /* NEW: KPIs, utility, progress */
+    .kpi { font-size: 2rem; font-weight: 700; margin-bottom: 4px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .muted { color: var(--muted); font-size: 12px; }
+    .pill { display: inline-block; padding: 4px 8px; font-size: 12px; border-radius: 999px; background: color-mix(in oklab, var(--fg) 8%, transparent); color: var(--fg); }
+    .pill.warning { background: color-mix(in oklab, var(--yellow) 25%, transparent); color: #fef3c7; }
+
+    .progress-bar { height: 8px; background: color-mix(in oklab, var(--fg) 10%, transparent); border-radius: 4px; margin: 12px 0; overflow: hidden; }
+    .progress { height: 100%; background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-radius: 4px; transition: width 0.5s ease; }
+
     /* Lists */
     ul.clean { list-style: none; }
     ul.clean li { 
@@ -347,6 +356,20 @@
     #authFeedback.error { color: var(--red); }
     #authFeedback.success { color: var(--green); }
 
+    /* Focus/Pomodoro and stats */
+    .pomodoro-container { text-align: center; padding: 20px 0; }
+    .pomodoro-display { font-size: 4rem; font-weight: 600; margin: 20px 0; font-variant-numeric: tabular-nums; color: var(--accent); }
+    .pomodoro-controls { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; }
+    .pomodoro-settings { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .setting { background: color-mix(in oklab, var(--fg) 6%, transparent); padding: 16px; border-radius: 12px; }
+    .setting label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--muted); }
+    .setting select { width: 100%; background: var(--card); }
+
+    .focus-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .stat { background: color-mix(in oklab, var(--fg) 6%, transparent); padding: 16px; border-radius: 12px; text-align: center; }
+    .stat-value { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .stat-label { font-size: 14px; color: var(--muted); }
+
 
     /* IMPROVEMENT: Responsive layout */
     @media (max-width: 768px) {
@@ -363,6 +386,8 @@
         flex-direction: column;
         align-items: flex-start;
       }
+      .pomodoro-display { font-size: 3rem; }
+      .pomodoro-settings { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -371,7 +396,7 @@
 
   <header>
     <div class="wrap row">
-      <h1>🧘‍♂️ Wellness Dashboard</h1>
+      <h1>FlowState</h1>
       <div class="spacer"></div>
       <button id="themeToggle" title="Toggle light/dark mode">
         <span id="themeIcon"></span> 
@@ -469,6 +494,74 @@
       </div>
     </section>
   </template>
+
+  <!-- NEW: Focus Template with milliseconds timer -->
+  <template id="focusTpl">
+    <section class="grid cols-2">
+      <div class="card">
+        <h3>⏱️ Focus Session</h3>
+        <div class="pomodoro-container">
+          <div class="pomodoro-display" id="pomodoroTimer">25:00.000</div>
+          <div class="pomodoro-controls">
+            <button class="primary" id="startPomodoro">Start Focus</button>
+            <button class="ghost" id="resetPomodoro">Reset</button>
+          </div>
+          <div class="pomodoro-settings">
+            <div class="setting">
+              <label>Focus Duration</label>
+              <select id="focusDuration">
+                <option value="15">15 min</option>
+                <option value="25" selected>25 min</option>
+                <option value="45">45 min</option>
+                <option value="60">60 min</option>
+              </select>
+            </div>
+            <div class="setting">
+              <label>Short Break</label>
+              <select id="shortBreakDuration">
+                <option value="5">5 min</option>
+                <option value="10" selected>10 min</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h3>📈 Focus Analytics</h3>
+        <div class="focus-stats">
+          <div class="stat">
+            <div class="stat-value" id="sessionsCompleted">0</div>
+            <div class="stat-label">Today's Sessions</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="focusTime">0m</div>
+            <div class="stat-label">Focus Time</div>
+          </div>
+        </div>
+        <div class="focus-history">
+          <h4 style="margin-bottom:8px">Recent Sessions</h4>
+          <ul class="clean" id="focusHistory"></ul>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <!-- NEW: Settings Template -->
+  <template id="settingsTpl">
+    <section class="grid cols-1">
+      <div class="card" style="max-width:600px">
+        <h3>⚙️ Settings</h3>
+        <div class="row" style="margin-bottom:12px">
+          <label for="profileName" class="muted" style="min-width:100%">Display Name</label>
+          <input id="profileName" placeholder="Your name" />
+        </div>
+        <div class="row">
+          <button class="primary" id="saveSettingsBtn">Save Settings</button>
+        </div>
+      </div>
+    </section>
+  </template>
   
   <script type="module">
     // --- FIREBASE SDK IMPORTS ---
@@ -510,11 +603,6 @@
     const fmt = {
       today: () => new Date().toISOString().slice(0, 10),
       ymd: d => new Date(d).toISOString().slice(0, 10),
-      lastNDates: n => Array.from({ length: n }, (_, i) => {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        return d.toISOString().slice(0, 10);
-      }),
       formatDateDisplay: dateStr => {
         const today = new Date();
         const yesterday = new Date();
@@ -523,18 +611,40 @@
         if (date.toDateString() === today.toDateString()) return 'Today';
         if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
         return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      },
+      formatDuration: (minutes) => {
+        const h = Math.floor(minutes / 60);
+        const m = Math.floor(minutes % 60);
+        return h > 0 ? `${h}h ${m}m` : `${m}m`;
+      },
+      formatTime: (date) => date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      formatTimerMs: (ms) => {
+        const clamped = Math.max(0, ms|0);
+        const totalSeconds = Math.floor(clamped / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        const millis = clamped % 1000;
+        return `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}.${String(millis).padStart(3,'0')}`;
       }
     };
 
     // --- GLOBAL STATE ---
     let state = {
-      user: null, // To store the logged-in user object
+      user: null,
       tasks: [],
       habits: [],
       journals: [],
-      theme: localStorage.getItem('theme') || 'dark', // Get theme from local storage
+      focusSessions: [],
+      profile: { name: '' },
+      theme: localStorage.getItem('theme') || 'dark',
       selectedMood: 3,
-      authMode: 'login' // NEW: 'login' or 'signup'
+      authMode: 'login',
+      // Focus timer state
+      pomodoroMode: 'focus',
+      pomodoroRunning: false,
+      pomodoroRAF: null,
+      pomodoroEndTs: 0,
+      pomodoroRemainingMs: 25 * 60 * 1000
     };
 
     // --- DATA HANDLING (FIRESTORE) ---
@@ -548,11 +658,14 @@
             state.tasks = data.tasks || [];
             state.habits = data.habits || [];
             state.journals = data.journals || [];
+            state.focusSessions = data.focusSessions || [];
+            state.profile = data.profile || { name: '' };
         } else {
-            // First time user, initialize with empty data
             state.tasks = [];
             state.habits = [];
             state.journals = [];
+            state.focusSessions = [];
+            state.profile = { name: '' };
         }
     }
 
@@ -562,8 +675,10 @@
         await setDoc(userDocRef, {
             tasks: state.tasks,
             habits: state.habits,
-            journals: state.journals
-        });
+            journals: state.journals,
+            focusSessions: state.focusSessions,
+            profile: state.profile
+        }, { merge: true });
     }
 
 
@@ -598,11 +713,21 @@
         }
     }
 
+    function getGreeting() {
+      const hours = new Date().getHours();
+      if (hours >= 5 && hours < 12) return 'Good morning';
+      if (hours >= 12 && hours < 17) return 'Good afternoon';
+      if (hours >= 17 && hours < 22) return 'Good evening';
+      return 'Hello';
+    }
+
     // --- ROUTER & NAVIGATION ---
     const routes = [
       { id: 'dashboard', label: '📊 Dashboard', tpl: '#dashboardTpl', mount: mountDashboard },
       { id: 'tasks', label: '📋 Tasks & Habits', tpl: '#tasksTpl', mount: mountTasks },
       { id: 'journal', label: '📖 Journal', tpl: '#journalTpl', mount: mountJournal },
+      { id: 'focus', label: '⏱️ Focus', tpl: '#focusTpl', mount: mountFocus },
+      { id: 'settings', label: '⚙️ Settings', tpl: '#settingsTpl', mount: mountSettings },
     ];
 
     function renderTabs(activeId = 'dashboard') {
@@ -728,14 +853,29 @@
         const todayTasks = state.tasks.filter(t => (t.timestamp || today) === today);
         const doneCount = todayTasks.filter(t => t.completed).length;
         const top3 = state.tasks.filter(t => (t.timestamp || today) === today && !t.completed).slice(0, 3);
+
         const moodEntries = state.journals.filter(j => j.mood).slice(0, 7);
         const moodAvg = moodEntries.length ? (moodEntries.reduce((sum, j) => sum + Number(j.mood), 0) / moodEntries.length).toFixed(1) : '-';
-        const topHabits = [...state.habits].sort((a,b) => (b.streak || 0) - (a.streak || 0)).slice(0, 3);
+
+        const todayFocus = state.focusSessions.filter(s => s.date === today && s.mode === 'focus');
+        const focusMinutes = Math.round(todayFocus.reduce((sum, s) => sum + (s.durationMs || 0), 0) / 60000);
+
+        const completionPct = todayTasks.length ? Math.round((doneCount / todayTasks.length) * 100) : 0;
+        const greetingName = state.profile?.name?.trim() ? `, ${state.profile.name}` : '';
+        const greeting = `${getGreeting()}${greetingName}`;
 
         const cards = [
-            { title: "Today's Tasks", content: `<div class="kpi">${doneCount}/${todayTasks.length}</div><div class="muted">${top3.length ? top3.map(t => t.title).join(' • ') : 'All tasks done! 🎉'}</div>` },
+            { title: greeting, content: `<div class="muted">Have a productive day!</div>` },
+            { title: "Today's Tasks", content: `
+                <div class="kpi">${doneCount}/${todayTasks.length}</div>
+                <div class="progress-bar"><div class="progress" style="width:${completionPct}%"></div></div>
+                <div class="muted">${top3.length ? top3.map(t => t.title).join(' • ') : 'All tasks done! 🎉'}</div>
+            ` },
             { title: "7-Day Mood Average", content: `<div class="kpi">${moodAvg}</div><div class="muted">😩 stressed → 🤩 great</div>`},
-            { title: "🔥 Top Habit Streaks", content: topHabits.length ? topHabits.map(h => `<div>${h.title}: <b>${h.streak || 0} days</b></div>`).join('') : '<div class="muted">Add habits to build streaks!</div>'}
+            { title: "Focus Today", content: `
+                <div class="kpi">${fmt.formatDuration(focusMinutes)}</div>
+                <div class="muted">${todayFocus.length} session${todayFocus.length !== 1 ? 's' : ''}</div>
+            `}
         ];
         
         grid.innerHTML = cards.map(c => `<div class="card"><h3>${c.title}</h3>${c.content}</div>`).join('');
@@ -766,6 +906,40 @@
         $('#moodSelector').addEventListener('click', selectMood);
         
         journalDate.addEventListener('change', loadJournalEntryForDate);
+    }
+
+    function mountFocus() {
+      renderFocusStats();
+      renderFocusHistory();
+      // Initialize remaining time from select
+      state.pomodoroMode = 'focus';
+      state.pomodoroRunning = false;
+      state.pomodoroRemainingMs = parseInt($('#focusDuration').value) * 60 * 1000;
+      $('#pomodoroTimer').textContent = fmt.formatTimerMs(state.pomodoroRemainingMs);
+
+      $('#startPomodoro').addEventListener('click', togglePomodoro);
+      $('#resetPomodoro').addEventListener('click', resetPomodoro);
+      $('#focusDuration').addEventListener('change', () => {
+        if (!state.pomodoroRunning && state.pomodoroMode === 'focus') {
+          state.pomodoroRemainingMs = parseInt($('#focusDuration').value) * 60 * 1000;
+          $('#pomodoroTimer').textContent = fmt.formatTimerMs(state.pomodoroRemainingMs);
+        }
+      });
+      $('#shortBreakDuration').addEventListener('change', () => {
+        if (!state.pomodoroRunning && state.pomodoroMode === 'break') {
+          state.pomodoroRemainingMs = parseInt($('#shortBreakDuration').value) * 60 * 1000;
+          $('#pomodoroTimer').textContent = fmt.formatTimerMs(state.pomodoroRemainingMs);
+        }
+      });
+    }
+
+    function mountSettings() {
+      $('#profileName').value = state.profile?.name || '';
+      $('#saveSettingsBtn').addEventListener('click', async () => {
+        state.profile = { name: $('#profileName').value.trim() };
+        await saveData();
+        showSuccess('Settings saved');
+      });
     }
 
     // --- TASKS & HABITS LOGIC ---
@@ -812,7 +986,10 @@
             <span style="${t.completed ? 'text-decoration: line-through;' : ''}">${t.title}</span>
             ${isPriority ? '<span class="pill warning">⭐ Priority</span>' : ''}
           </div>
-          <button class="ghost" data-id="${t.id}" data-action="delete" title="Delete task">🗑️</button>
+          <div class="row">
+            <button class="${t.completed ? 'ghost' : 'primary'}" data-id="${t.id}" data-action="complete" ${t.completed ? 'disabled' : ''}>${t.completed ? '✅ Done' : 'Done'}</button>
+            <button class="ghost" data-id="${t.id}" data-action="delete" title="Delete task">🗑️</button>
+          </div>
         </li>`;
     }
     
@@ -845,6 +1022,12 @@
             if (task) {
                 task.completed = !task.completed;
                 if(task.completed) showSuccess('Task complete! 🎉');
+            }
+        } else if (action === 'complete') {
+            const task = state.tasks.find(t => t.id === id);
+            if (task && !task.completed) {
+                task.completed = true;
+                showSuccess('Task complete! 🎉');
             }
         } else if (action === 'delete') {
             if (confirm('Delete this task?')) {
@@ -930,6 +1113,106 @@
         `).join('') : `<li style="opacity:1" class="muted">No recent journal entries.</li>`;
     }
 
+    // --- FOCUS/POMODORO LOGIC ---
+    function togglePomodoro() {
+      const btn = $('#startPomodoro');
+      if (state.pomodoroRunning) {
+        // Pause
+        state.pomodoroRunning = false;
+        cancelAnimationFrame(state.pomodoroRAF);
+        state.pomodoroRAF = null;
+        state.pomodoroRemainingMs = Math.max(0, state.pomodoroEndTs - Date.now());
+        btn.textContent = 'Resume';
+        showSuccess('Focus session paused');
+      } else {
+        // Start
+        state.pomodoroRunning = true;
+        state.pomodoroEndTs = Date.now() + state.pomodoroRemainingMs;
+        btn.textContent = state.pomodoroMode === 'focus' ? 'Pause Focus' : 'Pause Break';
+        state.pomodoroRAF = requestAnimationFrame(updatePomodoro);
+        showSuccess(state.pomodoroMode === 'focus' ? 'Focus started' : 'Break started');
+      }
+    }
+
+    function updatePomodoro() {
+      if (!state.pomodoroRunning) return;
+      const now = Date.now();
+      const msLeft = state.pomodoroEndTs - now;
+      if (msLeft <= 0) {
+        // Complete current segment
+        state.pomodoroRunning = false;
+        cancelAnimationFrame(state.pomodoroRAF);
+        state.pomodoroRAF = null;
+        const timerEl = $('#pomodoroTimer');
+        if (timerEl) timerEl.textContent = '00:00.000';
+
+        // Record completed session
+        const durationMs = (state.pomodoroMode === 'focus' ? parseInt($('#focusDuration').value) : parseInt($('#shortBreakDuration').value)) * 60 * 1000;
+        state.focusSessions.unshift({
+          date: fmt.today(),
+          timestamp: new Date().toISOString(),
+          mode: state.pomodoroMode,
+          durationMs
+        });
+        saveData();
+        renderFocusStats();
+        renderFocusHistory();
+
+        // Switch mode and reset remaining
+        if (state.pomodoroMode === 'focus') {
+          state.pomodoroMode = 'break';
+          state.pomodoroRemainingMs = parseInt($('#shortBreakDuration').value) * 60 * 1000;
+          $('#startPomodoro').textContent = 'Start Break';
+          showSuccess('Focus complete! Take a break.');
+        } else {
+          state.pomodoroMode = 'focus';
+          state.pomodoroRemainingMs = parseInt($('#focusDuration').value) * 60 * 1000;
+          $('#startPomodoro').textContent = 'Start Focus';
+          showSuccess('Break complete! Ready to focus?');
+        }
+        $('#pomodoroTimer').textContent = fmt.formatTimerMs(state.pomodoroRemainingMs);
+        return;
+      }
+
+      // Update display
+      const timerEl2 = $('#pomodoroTimer');
+      if (timerEl2) timerEl2.textContent = fmt.formatTimerMs(msLeft);
+      state.pomodoroRAF = requestAnimationFrame(updatePomodoro);
+    }
+
+    function resetPomodoro() {
+      if (state.pomodoroRAF) cancelAnimationFrame(state.pomodoroRAF);
+      state.pomodoroRAF = null;
+      state.pomodoroRunning = false;
+      state.pomodoroMode = 'focus';
+      state.pomodoroRemainingMs = parseInt($('#focusDuration').value) * 60 * 1000;
+      const timerEl = $('#pomodoroTimer');
+      if (timerEl) timerEl.textContent = fmt.formatTimerMs(state.pomodoroRemainingMs);
+      $('#startPomodoro').textContent = 'Start Focus';
+      showSuccess('Timer reset');
+    }
+
+    function renderFocusStats() {
+      const today = fmt.today();
+      const todaySessions = state.focusSessions.filter(s => s.date === today && s.mode === 'focus');
+      const totalMinutes = Math.round(todaySessions.reduce((sum, s) => sum + (s.durationMs || 0), 0) / 60000);
+      $('#sessionsCompleted').textContent = todaySessions.length;
+      $('#focusTime').textContent = `${totalMinutes}m`;
+    }
+
+    function renderFocusHistory() {
+      const history = $('#focusHistory');
+      const recent = [...state.focusSessions].slice(0, 7);
+      history.innerHTML = recent.length ? recent.map(s => `
+          <li>
+            <div style="flex:1">
+              <div style="font-weight: 600;">${fmt.formatDateDisplay(s.date)} • ${s.mode === 'focus' ? 'Focus' : 'Break'}</div>
+              <div class="muted">${fmt.formatTime(new Date(s.timestamp))} • ${Math.round((s.durationMs||0)/60000)} min</div>
+            </div>
+          </li>
+      `).join('') : `<li style="opacity:1" class="muted">No focus sessions yet.</li>`;
+    }
+
     // --- INITIALIZATION ---
     function init() {
       applyTheme(state.theme);
@@ -949,9 +1232,9 @@
               // User is signed out
               document.body.classList.remove('logged-in');
               state.user = null;
-              state.tasks = []; state.habits = []; state.journals = []; // Clear local state
-              $('#tabs').innerHTML = ''; // Clear tabs
-              mountAuth(); // Show the login screen
+              state.tasks = []; state.habits = []; state.journals = []; state.focusSessions = []; state.profile = { name: '' };
+              $('#tabs').innerHTML = '';
+              mountAuth();
           }
       });
     }
