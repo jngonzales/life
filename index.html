@@ -1180,12 +1180,12 @@
       }
       let dayHeader = document.getElementById('dayHeader');
       if (dayHeader) {
-        dayHeader.textContent = `Day #${dayCount}`;
+        dayHeader.textContent = `Day ${dayCount}`;
       } else {
         dayHeader = document.createElement('div');
         dayHeader.id = 'dayHeader';
         dayHeader.className = 'day-header';
-        dayHeader.textContent = `Day #${dayCount}`;
+        dayHeader.textContent = `Day ${dayCount}`;
         view.insertBefore(dayHeader, grid);
       }
 
@@ -1774,3 +1774,4 @@
    </script>
  </body>
  </html>
+
