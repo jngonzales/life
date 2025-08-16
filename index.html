@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Wellness & Productivity Dashboard</title>
+  <title>FlowState: Mindful Productivity Hub</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <style>
     /* 
       IMPROVEMENT: Added CSS variables for animations and improved color consistency.
@@ -84,6 +85,15 @@
         pointer-events: none;
     }
 
+    /* Icons */
+    .icon {
+      font-family: 'Material Icons Round';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
 
     /* Header */
     header { 
@@ -100,7 +110,6 @@
     body.logged-in header {
       display: block; /* Show header only when logged in */
     }
-
 
     .wrap { 
       max-width: 1400px; 
@@ -199,7 +208,6 @@
         text-decoration: underline;
     }
 
-
     /* Tabs */
     .tabs { 
       display: flex; 
@@ -257,7 +265,6 @@
     .card:nth-child(5) { animation-delay: 0.5s; }
     .card:nth-child(6) { animation-delay: 0.6s; }
 
-
     .card:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-lg);
@@ -269,6 +276,84 @@
       font-size: 18px;
       font-weight: 600;
       color: var(--accent);
+    }
+    
+    /* Progress bars */
+    .progress-bar {
+      height: 8px;
+      background: color-mix(in oklab, var(--fg) 10%, transparent);
+      border-radius: 4px;
+      margin: 12px 0;
+      overflow: hidden;
+    }
+    .progress {
+      height: 100%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    
+    /* Mood scale */
+    .mood-scale {
+      display: flex;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .mood-point {
+      height: 8px;
+      flex: 1;
+      background: color-mix(in oklab, var(--fg) 15%, transparent);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .mood-point.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+    .mood-point:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      box-shadow: var(--shadow);
+    }
+    
+    /* Focus goal */
+    .focus-goal {
+      margin-top: 12px;
+    }
+    .goal-text {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    
+    /* Timeframe selector */
+    .timeframe-selector {
+      display: flex;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .timeframe-btn {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      background: transparent;
+      border: 1px solid color-mix(in oklab, var(--fg) 20%, transparent);
+      color: var(--fg);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .timeframe-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
     }
     
     /* Lists */
@@ -322,6 +407,183 @@
     }
     .mood-emoji { font-size: 24px; display: block; margin-bottom: 4px; }
 
+    /* Pomodoro Styles */
+    .pomodoro-container {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .pomodoro-display {
+      font-size: 5rem;
+      font-weight: 300;
+      margin: 20px 0;
+      font-feature-settings: "tnum";
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+    }
+    .pomodoro-controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .pomodoro-settings {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .setting {
+      background: color-mix(in oklab, var(--fg) 6%, transparent);
+      padding: 16px;
+      border-radius: 12px;
+    }
+    .setting label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .setting select {
+      width: 100%;
+      background: var(--card);
+    }
+    
+    /* Stats */
+    .focus-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat {
+      background: color-mix(in oklab, var(--fg) 6%, transparent);
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition-medium);
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: var(--transition-medium);
+      border: 1px solid color-mix(in oklab, var(--accent) 20%, transparent);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-overlay.show .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      padding: 8px;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    /* Custom number input styling */
+    input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+      background: var(--card);
+      border: 1px solid color-mix(in oklab, var(--fg) 20%, transparent);
+      border-radius: 8px;
+      padding: 8px 12px;
+      width: 80px;
+      color: var(--fg);
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Style textareas to match theme */
+    textarea {
+      background: var(--card);
+      border: 1px solid color-mix(in oklab, var(--fg) 20%, transparent);
+      color: var(--fg);
+      resize: vertical;
+      min-height: 120px;
+      font-family: inherit;
+      line-height: 1.5;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 30%, transparent);
+    }
+
+    /* Priority star button */
+    .star-btn {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: var(--transition-fast);
+      color: var(--yellow);
+    }
+
+    .star-btn:hover {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+
+    .star-btn.active {
+      opacity: 1;
+    }
+
     /* Success feedback */
     .success-feedback {
       position: fixed;
@@ -347,7 +609,6 @@
     #authFeedback.error { color: var(--red); }
     #authFeedback.success { color: var(--green); }
 
-
     /* IMPROVEMENT: Responsive layout */
     @media (max-width: 768px) {
       .grid.cols-2, .grid.cols-3 {
@@ -363,16 +624,37 @@
         flex-direction: column;
         align-items: flex-start;
       }
+      .pomodoro-display {
+        font-size: 3rem;
+      }
+      .pomodoro-settings {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Day header */
+    .day-header {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--accent);
     }
   </style>
-</head>
-<body>
+ </head>
+ <body>
   <div id="loader">Loading...</div>
 
   <header>
     <div class="wrap row">
-      <h1>🧘‍♂️ Wellness Dashboard</h1>
+      <h1><i class="icon">dashboard</i> FlowState</h1>
       <div class="spacer"></div>
+      <!-- Clock + timezone selector -->
+      <div style="display:flex;flex-direction:column;align-items:flex-end;margin-right:12px;font-size:13px;color:var(--muted);" id="clockWrapper">
+        <div id="clockDate">--</div>
+        <div id="clockTime" style="font-weight:700;color:var(--accent);">--:--</div>
+      </div>
+      <select id="tzSelect" style="width:220px;margin-right:12px;" title="Select timezone"></select>
       <button id="themeToggle" title="Toggle light/dark mode">
         <span id="themeIcon"></span> 
         <span id="themeText"></span>
@@ -404,7 +686,6 @@
     </div>
   </template>
 
-
   <template id="dashboardTpl">
     <section class="grid cols-3">
       <!-- Cards will be populated by JS -->
@@ -414,26 +695,26 @@
   <template id="tasksTpl">
     <section class="grid cols-2">
       <div class="card">
-        <h3>📋 Add Task</h3>
+        <h3><i class="icon">checklist</i> Add Task</h3>
         <div class="row" style="margin-bottom: 20px;">
           <input id="taskTitle" placeholder="What needs to be done?" style="flex: 1;" />
-          <button class="primary" id="addTaskBtn">✨ Add Task</button>
+          <button class="primary" id="addTaskBtn">Add Task</button>
         </div>
         <div style="margin-bottom: 16px;">
-          <h4 style="color: var(--accent); margin-bottom: 12px;">🎯 Priority Tasks (Top 3)</h4>
+          <h4 style="color: var(--accent); margin-bottom: 12px;">Priority Tasks (Top 3)</h4>
           <ul class="clean" id="top3List"></ul>
         </div>
         <div>
-          <h4 style="color: var(--muted); margin-bottom: 12px;">📝 All Tasks Today</h4>
+          <h4 style="color: var(--muted); margin-bottom: 12px;">All Tasks Today</h4>
           <ul class="clean" id="taskList"></ul>
         </div>
       </div>
 
       <div class="card">
-        <h3>🎯 Add Habit</h3>
+        <h3><i class="icon">repeat</i> Add Habit</h3>
         <div class="row" style="margin-bottom: 20px;">
           <input id="habitTitle" placeholder="e.g., Morning meditation" style="flex: 1;" />
-          <button class="primary" id="addHabitBtn">➕ Add</button>
+          <button class="primary" id="addHabitBtn">Add</button>
         </div>
         <ul class="clean" id="habitList"></ul>
       </div>
@@ -443,10 +724,10 @@
   <template id="journalTpl">
     <section class="grid cols-2">
       <div class="card">
-        <h3>📖 Daily Journal</h3>
-        <div class="row" style="margin-bottom: 16px; gap: 12px;">
-          <input id="journalDate" type="date" />
-          <button class="primary" id="saveJournalBtn">💾 Save Entry</button>
+        <h3><i class="icon">book</i> Daily Journal</h3>
+        <div class="row" style="margin-bottom: 16px; gap: 12px; align-items:center;">
+          <div style="flex:1;color:var(--muted);font-size:13px;">Entries will be saved with your selected local time.</div>
+          <button class="primary" id="saveJournalBtn">Save Entry</button>
         </div>
         
         <div style="margin-bottom: 20px;">
@@ -464,8 +745,78 @@
       </div>
       
       <div class="card">
-        <h3>📚 Recent Entries</h3>
+        <h3><i class="icon">history</i> Recent Entries</h3>
         <ul class="clean" id="journalList"></ul>
+      </div>
+    </section>
+  </template>
+  
+  <template id="journalModalTpl">
+    <div class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Journal Entry</h3>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="modal-delete" title="Delete entry" style="background:none;border:none;color:var(--red);cursor:pointer;">🗑️</button>
+            <button class="modal-close">✕</button>
+          </div>
+        </div>
+        <div class="modal-content">
+          <!-- Journal content will be injected here -->
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="focusTpl">
+    <section class="grid cols-2">
+      <div class="card">
+        <h3><i class="icon">timer</i> Focus Session</h3>
+        <div class="pomodoro-container">
+          <div class="pomodoro-display" id="pomodoroTimer">25:00</div>
+          <div class="pomodoro-controls">
+            <button class="primary" id="startPomodoro">Start Focus</button>
+            <button class="ghost" id="resetPomodoro">Reset</button>
+          </div>
+          <div class="pomodoro-settings">
+            <div class="setting">
+              <label>Focus Duration (minutes)</label>
+              <div class="row" style="gap: 8px;">
+                <input type="number" id="focusDuration" min="1" max="120" value="25">
+                <div class="row" style="gap: 4px;">
+                  <button class="ghost" onclick="quickSetDuration(15)">15</button>
+                  <button class="ghost" onclick="quickSetDuration(25)">25</button>
+                  <button class="ghost" onclick="quickSetDuration(45)">45</button>
+                </div>
+              </div>
+            </div>
+            <div class="setting">
+              <label>Short Break</label>
+              <select id="shortBreakDuration">
+                <option value="5">5 min</option>
+                <option value="10" selected>10 min</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h3><i class="icon">analytics</i> Focus Analytics</h3>
+        <div class="focus-stats">
+          <div class="stat">
+            <div class="stat-value" id="sessionsCompleted">0</div>
+            <div class="stat-label">Today's Sessions</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="focusTime">0m</div>
+            <div class="stat-label">Focus Time</div>
+          </div>
+        </div>
+        <div class="focus-history">
+          <h4>Recent Sessions</h4>
+          <ul class="clean" id="focusHistory"></ul>
+        </div>
       </div>
     </section>
   </template>
@@ -479,7 +830,7 @@
         signInWithEmailAndPassword, 
         signOut, 
         onAuthStateChanged,
-        sendPasswordResetEmail // NEW: Import for password reset
+        sendPasswordResetEmail
     } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
     import { 
         getFirestore, 
@@ -507,6 +858,81 @@
     const $ = (q, el = document) => el.querySelector(q);
     const $$ = (q, el = document) => Array.from(el.querySelectorAll(q));
 
+    // --- Timezone / Clock ---
+    // Expanded list of human-friendly timezone options mapped to representative IANA zones
+    const timezones = [
+      { v: 'Etc/GMT+12',  l: 'UTC−12:00 — Baker Island, Howland Island (uninhabited)' },
+      { v: 'Pacific/Pago_Pago', l: 'UTC−11:00 — American Samoa, Niue' },
+      { v: 'Pacific/Honolulu', l: 'UTC−10:00 — Hawaii, Cook Islands' },
+      { v: 'Pacific/Marquesas', l: 'UTC−09:30 — Marquesas Islands (French Polynesia)' },
+      { v: 'America/Anchorage', l: 'UTC−09:00 — Alaska' },
+      { v: 'America/Los_Angeles', l: 'UTC−08:00 — Pacific Time (California, Vancouver)' },
+      { v: 'America/Denver', l: 'UTC−07:00 — Mountain Time (Denver, Calgary)' },
+      { v: 'America/Chicago', l: 'UTC−06:00 — Central Time (Chicago, Mexico City)' },
+      { v: 'America/New_York', l: 'UTC−05:00 — Eastern Time (New York, Toronto, Peru)' },
+      { v: 'America/Caracas', l: 'UTC−04:30 — Venezuela (Caracas)' },
+      { v: 'America/Halifax', l: 'UTC−04:00 — Atlantic Time (Caribbean, Puerto Rico)' },
+      { v: 'America/St_Johns', l: 'UTC−03:30 — Newfoundland (Canada)' },
+      { v: 'America/Argentina/Buenos_Aires', l: 'UTC−03:00 — Argentina, Brazil (east coast), Uruguay' },
+      { v: 'Atlantic/South_Georgia', l: 'UTC−02:00 — South Georgia & South Sandwich Islands' },
+      { v: 'Atlantic/Azores', l: 'UTC−01:00 — Azores (Portugal), Cape Verde' },
+      { v: 'Etc/UTC', l: 'UTC±00:00 — GMT, London (winter), Iceland' },
+      { v: 'Europe/Paris', l: 'UTC+01:00 — Central Europe (Paris, Berlin, Rome, Madrid, Lagos)' },
+      { v: 'Europe/Helsinki', l: 'UTC+02:00 — Eastern Europe, South Africa, Greece, Israel' },
+      { v: 'Europe/Moscow', l: 'UTC+03:00 — Moscow, Saudi Arabia, East Africa' },
+      { v: 'Asia/Tehran', l: 'UTC+03:30 — Iran' },
+      { v: 'Asia/Dubai', l: 'UTC+04:00 — UAE, Oman, Armenia, Azerbaijan' },
+      { v: 'Asia/Kabul', l: 'UTC+04:30 — Afghanistan' },
+      { v: 'Asia/Karachi', l: 'UTC+05:00 — Pakistan, Uzbekistan, Maldives' },
+      { v: 'Asia/Kolkata', l: 'UTC+05:30 — India, Sri Lanka' },
+      { v: 'Asia/Kathmandu', l: 'UTC+05:45 — Nepal' },
+      { v: 'Asia/Dhaka', l: 'UTC+06:00 — Bangladesh, Kazakhstan' },
+      { v: 'Indian/Cocos', l: 'UTC+06:30 — Myanmar, Cocos Islands' },
+      { v: 'Asia/Bangkok', l: 'UTC+07:00 — Thailand, Vietnam, Indonesia (Jakarta WIB)' },
+      { v: 'Asia/Shanghai', l: 'UTC+08:00 — Philippines, Singapore, Malaysia, China, Western Australia' },
+      { v: 'Australia/Eucla', l: 'UTC+08:45 — Eucla (tiny region in Western Australia)' },
+      { v: 'Asia/Tokyo', l: 'UTC+09:00 — Japan, Korea' },
+      { v: 'Australia/Adelaide', l: 'UTC+09:30 — Central Australia (Adelaide, Darwin)' },
+      { v: 'Australia/Sydney', l: 'UTC+10:00 — Eastern Australia (Sydney, Melbourne), Papua New Guinea' },
+      { v: 'Australia/Lord_Howe', l: 'UTC+10:30 — Lord Howe Island (Australia)' },
+      { v: 'Pacific/Guadalcanal', l: 'UTC+11:00 — Solomon Islands, New Caledonia' },
+      { v: 'Pacific/Auckland', l: 'UTC+12:00 — New Zealand, Fiji' },
+      { v: 'Pacific/Chatham', l: 'UTC+12:45 — Chatham Islands (New Zealand)' },
+      { v: 'Pacific/Tongatapu', l: 'UTC+13:00 — Tonga, Samoa (west), Tokelau' },
+      { v: 'Pacific/Kiritimati', l: 'UTC+14:00 — Line Islands (Kiribati) — earliest time zone on Earth' }
+    ];
+    
+    function initTimezone() {
+      const saved = localStorage.getItem('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone || 'Etc/UTC';
+      state.tz = saved;
+      const select = document.getElementById('tzSelect');
+      if (!select) return;
+      select.innerHTML = timezones.map(t => `<option value="${t.v}" ${t.v===saved? 'selected':''}>${t.l}</option>`).join('');
+      select.addEventListener('change', (e) => {
+        state.tz = e.target.value; localStorage.setItem('tz', state.tz); updateClock(); renderJournalList();
+      });
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const tz = state.tz || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      // date line
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'long', year:'numeric', month:'2-digit', day:'2-digit'}).formatToParts(now);
+      const weekday = parts.find(p=>p.type==='weekday')?.value || '';
+      const month = parts.find(p=>p.type==='month')?.value || '';
+      const day = parts.find(p=>p.type==='day')?.value || '';
+      const year = parts.find(p=>p.type==='year')?.value || '';
+      const dateStr = `${weekday} - ${month}/${day}/${year}`;
+      const timeStr = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour:'2-digit', minute:'2-digit', hour12:true }).format(now);
+      const dateEl = document.getElementById('clockDate');
+      const timeEl = document.getElementById('clockTime');
+      if (dateEl) dateEl.textContent = dateStr;
+      if (timeEl) timeEl.textContent = timeStr;
+    }
+
+    // start clock tick
+    setInterval(() => { if (document.body.classList.contains('logged-in')) updateClock(); }, 1000);
+
     const fmt = {
       today: () => new Date().toISOString().slice(0, 10),
       ymd: d => new Date(d).toISOString().slice(0, 10),
@@ -523,18 +949,31 @@
         if (date.toDateString() === today.toDateString()) return 'Today';
         if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
         return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      },
+      formatDuration: (minutes) => {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+      },
+      formatTime: (date) => {
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       }
     };
 
     // --- GLOBAL STATE ---
     let state = {
-      user: null, // To store the logged-in user object
+      user: null,
       tasks: [],
       habits: [],
       journals: [],
-      theme: localStorage.getItem('theme') || 'dark', // Get theme from local storage
+      focusSessions: [],
+      theme: localStorage.getItem('theme') || 'dark',
       selectedMood: 3,
-      authMode: 'login' // NEW: 'login' or 'signup'
+      authMode: 'login',
+      pomodoroInterval: null,
+      pomodoroTimeLeft: 25 * 60,
+      pomodoroMode: 'focus'
+      , tz: localStorage.getItem('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
     };
 
     // --- DATA HANDLING (FIRESTORE) ---
@@ -548,11 +987,12 @@
             state.tasks = data.tasks || [];
             state.habits = data.habits || [];
             state.journals = data.journals || [];
+            state.focusSessions = data.focusSessions || [];
         } else {
-            // First time user, initialize with empty data
             state.tasks = [];
             state.habits = [];
             state.journals = [];
+            state.focusSessions = [];
         }
     }
 
@@ -562,10 +1002,10 @@
         await setDoc(userDocRef, {
             tasks: state.tasks,
             habits: state.habits,
-            journals: state.journals
+            journals: state.journals,
+            focusSessions: state.focusSessions
         });
     }
-
 
     // --- THEME TOGGLE ---
     function applyTheme(theme) {
@@ -577,7 +1017,7 @@
     
     $('#themeToggle').addEventListener('click', () => {
       state.theme = state.theme === 'light' ? 'dark' : 'light';
-      localStorage.setItem('theme', state.theme); // Save theme locally
+      localStorage.setItem('theme', state.theme);
       applyTheme(state.theme);
       showSuccess(`Switched to ${state.theme} mode`);
     });
@@ -589,12 +1029,11 @@
       setTimeout(() => feedback.classList.remove('show'), 3000);
     }
     
-    // IMPROVED: Single function for auth feedback
     function showAuthFeedback(message, type = 'error') {
         const el = $('#authFeedback');
         if(el) {
             el.textContent = message;
-            el.className = type; // 'error' or 'success'
+            el.className = type;
         }
     }
 
@@ -603,6 +1042,7 @@
       { id: 'dashboard', label: '📊 Dashboard', tpl: '#dashboardTpl', mount: mountDashboard },
       { id: 'tasks', label: '📋 Tasks & Habits', tpl: '#tasksTpl', mount: mountTasks },
       { id: 'journal', label: '📖 Journal', tpl: '#journalTpl', mount: mountJournal },
+      { id: 'focus', label: '⏱️ Focus', tpl: '#focusTpl', mount: mountFocus },
     ];
 
     function renderTabs(activeId = 'dashboard') {
@@ -614,7 +1054,7 @@
     }
 
     function navigate(id) {
-      if (!state.user) return mountAuth(); // If not logged in, show auth screen
+      if (!state.user) return mountAuth();
 
       const route = routes.find(r => r.id === id) || routes[0];
       renderTabs(id);
@@ -625,18 +1065,17 @@
         return;
       }
 
-      $('#view').innerHTML = ''; // Clear previous view
+      $('#view').innerHTML = '';
       $('#view').appendChild(tpl.content.cloneNode(true));
       route.mount();
       history.replaceState({}, '', `#${route.id}`);
     }
 
-    // --- AUTHENTICATION (IMPROVED) ---
+    // --- AUTHENTICATION ---
     function mountAuth() {
         $('#view').innerHTML = '';
         $('#view').appendChild($('#authTpl').content.cloneNode(true));
         
-        // Initial render based on state.authMode
         renderAuthView();
 
         $('#authActionBtn').addEventListener('click', handleAuthAction);
@@ -651,7 +1090,7 @@
         $('#authActionBtn').textContent = isLogin ? 'Login' : 'Sign Up';
         $('#forgotPasswordLink').style.display = isLogin ? 'block' : 'none';
         $('#authToggle').textContent = isLogin ? 'No account? Sign up' : 'Already have an account? Login';
-        showAuthFeedback('', 'error'); // Clear any previous feedback
+        showAuthFeedback('', 'error');
     }
 
     function toggleAuthMode() {
@@ -719,60 +1158,207 @@
         showSuccess('Logged out.');
     });
 
-
     // --- MOUNT FUNCTIONS ---
     function mountDashboard() {
-        const grid = $('.grid');
-        const today = fmt.today();
-        
-        const todayTasks = state.tasks.filter(t => (t.timestamp || today) === today);
-        const doneCount = todayTasks.filter(t => t.completed).length;
-        const top3 = state.tasks.filter(t => (t.timestamp || today) === today && !t.completed).slice(0, 3);
-        const moodEntries = state.journals.filter(j => j.mood).slice(0, 7);
-        const moodAvg = moodEntries.length ? (moodEntries.reduce((sum, j) => sum + Number(j.mood), 0) / moodEntries.length).toFixed(1) : '-';
-        const topHabits = [...state.habits].sort((a,b) => (b.streak || 0) - (a.streak || 0)).slice(0, 3);
+      const view = $('#view');
+      const grid = view.querySelector('.grid');
+      if (!grid) {
+        console.error('Dashboard grid not found; aborting mountDashboard');
+        // still try to render a simple fallback message
+        view.innerHTML = '<div class="card" style="padding:24px;">Unable to load dashboard.</div>';
+        return;
+      }
 
-        const cards = [
-            { title: "Today's Tasks", content: `<div class="kpi">${doneCount}/${todayTasks.length}</div><div class="muted">${top3.length ? top3.map(t => t.title).join(' • ') : 'All tasks done! 🎉'}</div>` },
-            { title: "7-Day Mood Average", content: `<div class="kpi">${moodAvg}</div><div class="muted">😩 stressed → 🤩 great</div>`},
-            { title: "🔥 Top Habit Streaks", content: topHabits.length ? topHabits.map(h => `<div>${h.title}: <b>${h.streak || 0} days</b></div>`).join('') : '<div class="muted">Add habits to build streaks!</div>'}
-        ];
+      const today = fmt.today();
+      // Day # header since account creation (avoid duplicates)
+      let dayCount = 1;
+      if (state.user && state.user.metadata && state.user.metadata.creationTime) {
+        const created = new Date(state.user.metadata.creationTime);
+        const createdDate = new Date(created.getFullYear(), created.getMonth(), created.getDate());
+        const diff = Math.floor((new Date(fmt.today() + 'T00:00:00') - createdDate) / 864e5) + 1;
+        dayCount = diff > 0 ? diff : 1;
+      }
+      let dayHeader = document.getElementById('dayHeader');
+      if (dayHeader) {
+        dayHeader.textContent = `Day #${dayCount}`;
+      } else {
+        dayHeader = document.createElement('div');
+        dayHeader.id = 'dayHeader';
+        dayHeader.className = 'day-header';
+        dayHeader.textContent = `Day #${dayCount}`;
+        view.insertBefore(dayHeader, grid);
+      }
+
+      // Tasks summary: compute counts using lastDone (done for today)
+      const allTasks = state.tasks || [];
+      const totalTasks = allTasks.length;
+      const doneCount = allTasks.filter(t => t.lastDone === today).length;
+      const top3 = allTasks.filter(t => t.priority && t.lastDone !== today).slice(0, 3);
+
+      // Mood data for selected timeframe (default last 30 days)
+      const moodEntries = state.journals.filter(j => j.mood);
+      const moodAvg = moodEntries.length ? (moodEntries.reduce((sum, j) => sum + Number(j.mood), 0) / moodEntries.length).toFixed(1) : '-';
+
+      const todayFocus = state.focusSessions.filter(s => s.date === today && s.mode === 'focus');
+      const focusMinutes = todayFocus.reduce((sum, s) => sum + s.duration, 0);
+
+      const cards = [
+        {
+          icon: 'check_circle',
+          title: 'Task Completion',
+          content: `
+            <div class="kpi">${doneCount}/${totalTasks}</div>
+            <div class="progress-bar">
+              <div class="progress" style="width: ${totalTasks ? (doneCount/totalTasks*100) : 0}%"></div>
+            </div>
+            ${top3.length ? `<div class="muted">${top3.map(t => t.title).join(' • ')}</div>` : '<div class="muted">No priority tasks</div>'}
+          `
+        },
+        {
+          icon: 'mood',
+          title: 'Wellbeing',
+          content: `
+            <div class="kpi">${moodAvg}/5</div>
+            <div class="muted">${getMoodDescription(parseFloat(moodAvg) || moodAvg)}</div>
+            <div class="mood-scale">
+              ${[1,2,3,4,5].map(i => `\n              <div class="mood-point ${i <= (moodAvg === '-' ? 0 : moodAvg) ? 'active' : ''}" data-tooltip="${getMoodLabel(i)}"></div>\n            `).join('')}
+            </div>
+          `
+        },
+        {
+          icon: 'timer',
+          title: 'Focus',
+          content: `
+            <div class="kpi">${focusMinutes}m</div>
+            <div class="muted">${todayFocus.length} session${todayFocus.length !== 1 ? 's' : ''} today</div>
+            <div class="focus-goal">
+              <div class="goal-text">${Math.floor(focusMinutes/60)}h ${focusMinutes%60}m of 4h goal</div>
+              <div class="progress-bar">
+                <div class="progress" style="width: ${Math.min(focusMinutes/240*100, 100)}%"></div>
+              </div>
+            </div>
+          `
+        }
+      ];
+
+      grid.innerHTML = cards.map(c => `
+        <div class="card">
+          <h3><i class="icon">${c.icon}</i> ${c.title}</h3>
+          ${c.content}
+        </div>
+      `).join('');
+
+      // Add timeframe selector for mood data (safe guard)
+      try { addTimeframeSelector(); } catch (err) { console.warn('Timeframe selector init failed', err); }
+    }
+
+    function getMoodDescription(avg) {
+        if (!avg || avg === '-') return "No data yet";
+        if (avg < 2) return "Feeling stressed";
+        if (avg < 3) return "Could be better";
+        if (avg < 4) return "Doing alright";
+        if (avg < 4.5) return "Feeling good";
+        return "Excellent mood!";
+    }
+
+    function getMoodLabel(level) {
+        const moods = {
+            1: "Very poor",
+            2: "Poor",
+            3: "Neutral",
+            4: "Good",
+            5: "Excellent"
+        };
+        return moods[level];
+    }
+
+    function addTimeframeSelector() {
+        const container = $('.card:nth-child(2)'); // Mood card
+        const selector = document.createElement('div');
+        selector.className = 'timeframe-selector';
+        selector.innerHTML = `
+            <button class="timeframe-btn active" data-days="7">Week</button>
+            <button class="timeframe-btn" data-days="30">Month</button>
+            <button class="timeframe-btn" data-days="90">Quarter</button>
+            <button class="timeframe-btn" data-days="365">Year</button>
+        `;
+        container.querySelector('.mood-scale').insertAdjacentElement('beforebegin', selector);
         
-        grid.innerHTML = cards.map(c => `<div class="card"><h3>${c.title}</h3>${c.content}</div>`).join('');
+        selector.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                $$('.timeframe-btn', selector).forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                updateMoodDisplay(parseInt(e.target.dataset.days, 10));
+            }
+        });
+    }
+
+    function updateMoodDisplay(days) {
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - days);
+        
+        const moodEntries = state.journals.filter(j => j.mood && new Date(j.date) >= cutoffDate);
+        const moodAvg = moodEntries.length ? (moodEntries.reduce((sum, j) => sum + Number(j.mood), 0) / moodEntries.length).toFixed(1) : '-';
+        const moodAvgNum = moodAvg === '-' ? '-' : parseFloat(moodAvg);
+        
+        const kpiEl = document.querySelector('.card:nth-child(2) .kpi');
+        const mutedEl = document.querySelector('.card:nth-child(2) .muted');
+        if (kpiEl) kpiEl.textContent = `${moodAvg}/5`;
+        if (mutedEl) mutedEl.textContent = getMoodDescription(moodAvgNum);
+        
+        // Update mood scale
+        $$('.mood-point').forEach((point, i) => {
+            if (moodAvgNum === '-') point.classList.remove('active');
+            else point.classList.toggle('active', i < moodAvgNum);
+        });
     }
 
     function mountTasks() {
-      renderTaskLists();
-      renderHabits();
-      
-      $('#addTaskBtn').addEventListener('click', addTask);
-      $('#taskTitle').addEventListener('keypress', e => e.key === 'Enter' && addTask());
-      
-      $('#addHabitBtn').addEventListener('click', addHabit);
-      $('#habitTitle').addEventListener('keypress', e => e.key === 'Enter' && addHabit());
+         renderTaskLists();
+         renderHabits();
+         
+         $('#addTaskBtn').addEventListener('click', addTask);
+         $('#taskTitle').addEventListener('keypress', e => e.key === 'Enter' && addTask());
+         
+         $('#addHabitBtn').addEventListener('click', addHabit);
+         $('#habitTitle').addEventListener('keypress', e => e.key === 'Enter' && addHabit());
 
-      $('#taskList, #top3List').addEventListener('click', handleTaskClick);
-      $('#habitList').addEventListener('click', handleHabitClick);
-    }
-    
+         // Attach click handlers to both task lists using querySelectorAll helper
+         $$('#taskList, #top3List').forEach(el => el.addEventListener('click', handleTaskClick));
+         $('#habitList').addEventListener('click', handleHabitClick);
+     }
+     
     function mountJournal() {
-        const journalDate = $('#journalDate');
-        journalDate.value = fmt.today();
-        
+        // journalDate input was removed; journal entries use selected timezone/current time
         renderJournalList();
-        loadJournalEntryForDate();
-
         $('#saveJournalBtn').addEventListener('click', saveJournalEntry);
         $('#moodSelector').addEventListener('click', selectMood);
+    }
+
+    function mountFocus() {
+        renderFocusStats();
+        renderFocusHistory();
         
-        journalDate.addEventListener('change', loadJournalEntryForDate);
+        $('#startPomodoro').addEventListener('click', togglePomodoro);
+        $('#resetPomodoro').addEventListener('click', resetPomodoro);
+        // Attach change listeners to both inputs
+        $$('#focusDuration, #shortBreakDuration').forEach(el => el.addEventListener('change', resetPomodoro));
+
+        // Attach quick preset buttons if present
+        $$('.pomodoro-settings .ghost').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const v = Number(e.target.textContent.trim());
+                if (!isNaN(v) && v > 0) quickSetDuration(v);
+            });
+        });
     }
 
     // --- TASKS & HABITS LOGIC ---
     function addTask() {
         const input = $('#taskTitle');
         if (!input.value.trim()) return;
-        state.tasks.unshift({ id: Date.now(), title: input.value.trim(), completed: false, timestamp: fmt.today() });
+        // Tasks persist across days; 'lastDone' tracks daily completion. If lastDone === today the task is treated as done for that day.
+        state.tasks.unshift({ id: Date.now(), title: input.value.trim(), completed: false, lastDone: null, priority: false });
         saveData();
         input.value = '';
         renderTaskLists();
@@ -791,12 +1377,27 @@
 
     function renderTaskLists() {
         const today = fmt.today();
-        const allToday = state.tasks.filter(t => (t.timestamp || today) === today);
-        
-        const top3 = allToday.filter(t => !t.completed).slice(0, 3);
-        $('#top3List').innerHTML = top3.length ? top3.map(t => taskItem(t, true)).join('') : `<li style="opacity:1" class="muted">No priority tasks!</li>`;
-        
-        $('#taskList').innerHTML = allToday.length ? allToday.map(t => taskItem(t)).join('') : `<li style="opacity:1" class="muted">No tasks for today. Add one!</li>`;
+        const all = state.tasks || [];
+
+        // Priority (top 3) shows only priority tasks not done today
+        const priorityTasks = all.filter(t => t.priority && t.lastDone !== today).slice(0, 3);
+        $('#top3List').innerHTML = priorityTasks.length ? 
+            priorityTasks.map(t => taskItem(t, true)).join('') : 
+            '<li style="opacity:1" class="muted">No priority tasks!</li>';
+
+        // Show all tasks; mark visually if done for today
+        const sortedTasks = [...all].sort((a, b) => {
+            const aPriority = a.priority ? 1 : 0;
+            const bPriority = b.priority ? 1 : 0;
+            if (aPriority !== bPriority) return bPriority - aPriority;
+            const aDone = a.lastDone === today ? 1 : 0;
+            const bDone = b.lastDone === today ? 1 : 0;
+            return aDone - bDone; // show not-done first
+        });
+
+        $('#taskList').innerHTML = sortedTasks.length ? 
+            sortedTasks.map(t => taskItem(t)).join('') : 
+            '<li style="opacity:1" class="muted">No tasks for today. Add one!</li>';
     }
     
     function renderHabits() {
@@ -805,15 +1406,22 @@
     }
     
     function taskItem(t, isPriority = false) {
-      return `
-        <li style="${t.completed ? 'opacity: 0.6;' : ''}">
-          <div class="row" style="gap: 12px; flex: 1;">
-            <input type="checkbox" data-id="${t.id}" data-action="toggle" ${t.completed ? 'checked' : ''} />
-            <span style="${t.completed ? 'text-decoration: line-through;' : ''}">${t.title}</span>
-            ${isPriority ? '<span class="pill warning">⭐ Priority</span>' : ''}
-          </div>
-          <button class="ghost" data-id="${t.id}" data-action="delete" title="Delete task">🗑️</button>
-        </li>`;
+        const doneToday = t.lastDone === fmt.today();
+        const titleStyle = doneToday ? 'text-decoration: line-through; color:var(--muted);' : '';
+        const checkbox = `<input type="checkbox" data-id="${t.id}" data-action="toggle" ${doneToday ? 'checked' : ''} />`;
+        const doneBtnLabel = doneToday ? 'Undo' : 'Done';
+        return `
+            <li style="${doneToday ? 'opacity: 0.7;' : ''}">
+                <div class="row" style="gap: 12px; flex: 1;">
+                    ${checkbox}
+                    <span style="${titleStyle}">${t.title}</span>
+                </div>
+                <div class="row" style="gap: 8px;">
+                    <button class="star-btn ${t.priority ? 'active' : ''}" data-id="${t.id}" data-action="priority" title="Mark as priority">⭐</button>
+                    <button class="ghost" data-id="${t.id}" data-action="done" title="Mark done for today">${doneBtnLabel}</button>
+                    <button class="ghost" data-id="${t.id}" data-action="delete" title="Delete task">🗑️</button>
+                </div>
+            </li>`;
     }
     
     function habitItem(h) {
@@ -821,8 +1429,8 @@
         return `
             <li>
                 <div style="flex:1;">
-                  <div style="font-weight: 600;">${h.title}</div>
-                  <div class="muted">🔥 ${h.streak || 0} day streak</div>
+                    <div style="font-weight: 600;">${h.title}</div>
+                    <div class="muted">🔥 ${h.streak || 0} day streak</div>
                 </div>
                 <div class="row">
                     <button data-id="${h.id}" data-action="complete" class="${doneToday ? 'ghost' : 'primary'}" ${doneToday ? 'disabled' : ''}>
@@ -839,22 +1447,29 @@
         
         const id = Number(target.dataset.id);
         const { action } = target.dataset;
+        const task = state.tasks.find(t => t.id === id);
 
-        if (action === 'toggle') {
-            const task = state.tasks.find(t => t.id === id);
-            if (task) {
-                task.completed = !task.completed;
-                if(task.completed) showSuccess('Task complete! 🎉');
-            }
-        } else if (action === 'delete') {
-            if (confirm('Delete this task?')) {
-                state.tasks = state.tasks.filter(t => t.id !== id);
-                showSuccess('Task deleted.');
-            }
-        }
-        saveData();
-        renderTaskLists();
-    }
+        const today = fmt.today();
+        if (action === 'toggle' && task) {
+            // Toggle done for today
+            if (task.lastDone === today) { task.lastDone = null; showSuccess('Marked as not done for today'); }
+            else { task.lastDone = today; showSuccess('Marked done for today'); }
+        } else if (action === 'priority' && task) {
+             task.priority = !task.priority;
+             showSuccess(task.priority ? 'Added to priorities!' : 'Removed from priorities');
+        } else if (action === 'done' && task) {
+            // Button toggles done state as well
+            if (task.lastDone === today) { task.lastDone = null; showSuccess('Undone for today'); }
+            else { task.lastDone = today; showSuccess('Marked done for today'); }
+          } else if (action === 'delete') {
+              if (confirm('Delete this task?')) {
+                  state.tasks = state.tasks.filter(t => t.id !== id);
+                  showSuccess('Task deleted.');
+              }
+          }
+          saveData();
+          renderTaskLists();
+      }
     
     function handleHabitClick(e) {
         const target = e.target.closest('[data-action]');
@@ -880,15 +1495,20 @@
         renderHabits();
     }
 
-
     // --- JOURNAL LOGIC ---
     function saveJournalEntry() {
-        const date = $('#journalDate').value;
+        // Use selected timezone to compute the date (yyyy-mm-dd) for journal entry
+        const tz = state.tz || Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const now = new Date();
+        const date = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
+        const time = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: true }).format(now);
         const text = $('#journalText').value.trim();
         if (!text) { alert('Please write something in your journal.'); return; }
         
-        state.journals = state.journals.filter(j => j.date !== date);
-        state.journals.unshift({ date, text, mood: state.selectedMood });
+        // Store full ISO timestamp for sorting and time display and timezone used
+        const entry = { date, text, mood: state.selectedMood, datetime: now.toISOString(), tz: tz, timeDisplay: time };
+        state.journals = state.journals.filter(j => j.date !== date || j.timeDisplay !== time);
+        state.journals.unshift(entry);
         saveData();
         renderJournalList();
         showSuccess('Journal entry saved!');
@@ -916,49 +1536,241 @@
     
     function renderJournalList() {
         const list = $('#journalList');
+        list.innerHTML = '';
         const moodMap = { 1: '😩', 2: '😐', 3: '🙂', 4: '😊', 5: '🤩' };
         
-        const recent = [...state.journals].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 7);
+        // Sort by datetime if available, else by date
+        const recent = [...state.journals].sort((a,b) => (b.datetime || b.date).localeCompare(a.datetime || a.date)).slice(0, 7);
         
-        list.innerHTML = recent.length ? recent.map(j => `
+        if (!recent.length) {
+            list.innerHTML = `<li style="opacity:1" class="muted">No recent journal entries.</li>`;
+            return;
+        }
+
+        function previewWords(text, n = 8){
+            if(!text) return '';
+            const words = text.split(/\s+/).filter(Boolean);
+            return words.length <= n ? text : words.slice(0, n).join(' ') + '...';
+        }
+
+        recent.forEach(j => {
+            const li = document.createElement('li');
+            li.style.cursor = 'pointer';
+
+            const left = document.createElement('div');
+            left.style.flex = '1';
+            left.innerHTML = `
+                <div style="font-weight: 600;">${fmt.formatDateDisplay(j.date)} ${moodMap[j.mood] || ''} <span style="color:var(--muted);font-weight:400">• ${j.timeDisplay || (j.datetime ? new Date(j.datetime).toLocaleTimeString() : '')}</span></div>
+                <div class="muted">${previewWords(j.text, 8)}</div>
+            `;
+
+            const icon = document.createElement('i');
+            icon.className = 'icon';
+            icon.textContent = 'chevron_right';
+
+            li.appendChild(left);
+            li.appendChild(icon);
+
+            li.addEventListener('click', () => showJournalModal(j.date));
+
+            list.appendChild(li);
+        });
+    }
+
+    // --- POMODORO/FOCUS LOGIC ---
+    function togglePomodoro() {
+        const btn = $('#startPomodoro');
+        
+        if (state.pomodoroInterval) {
+            // Pause
+            clearInterval(state.pomodoroInterval);
+            state.pomodoroInterval = null;
+            btn.textContent = 'Resume';
+            showSuccess('Focus session paused');
+        } else {
+            // Start
+            btn.textContent = 'Pause';
+            state.pomodoroInterval = setInterval(updatePomodoro, 1000);
+            showSuccess(`Focus session started - ${state.pomodoroMode === 'focus' ? 'Work time!' : 'Break time!'}`);
+        }
+    }
+
+    function updatePomodoro() {
+        state.pomodoroTimeLeft--;
+        
+        if (state.pomodoroTimeLeft <= 0) {
+            // Session complete
+            clearInterval(state.pomodoroInterval);
+            state.pomodoroInterval = null;
+            
+            // Record the completed session
+            const now = new Date();
+            const duration = state.pomodoroMode === 'focus' 
+                ? parseInt($('#focusDuration').value)
+                : parseInt($('#shortBreakDuration').value);
+            
+            state.focusSessions.unshift({
+                date: fmt.today(),
+                timestamp: now.toISOString(),
+                mode: state.pomodoroMode,
+                duration: duration
+            });
+            
+            saveData();
+            renderFocusStats();
+            renderFocusHistory();
+            
+            // Switch mode
+            if (state.pomodoroMode === 'focus') {
+                state.pomodoroMode = 'break';
+                state.pomodoroTimeLeft = parseInt($('#shortBreakDuration').value) * 60;
+                showSuccess('Focus session complete! Take a break.', 5000);
+            } else {
+                state.pomodoroMode = 'focus';
+                state.pomodoroTimeLeft = parseInt($('#focusDuration').value) * 60;
+                showSuccess('Break over! Ready for another focus session?', 5000);
+            }
+            
+            // Auto-start next session if enabled
+            $('#startPomodoro').textContent = 'Start ' + (state.pomodoroMode === 'focus' ? 'Focus' : 'Break');
+            togglePomodoro();
+            
+            return;
+        }
+        
+        // Update display
+        const minutes = Math.floor(state.pomodoroTimeLeft / 60);
+        const seconds = state.pomodoroTimeLeft % 60;
+        $('#pomodoroTimer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function resetPomodoro() {
+        if (state.pomodoroInterval) {
+            clearInterval(state.pomodoroInterval);
+            state.pomodoroInterval = null;
+        }
+        
+        state.pomodoroMode = 'focus';
+        state.pomodoroTimeLeft = parseInt($('#focusDuration').value) * 60;
+        $('#pomodoroTimer').textContent = `${$('#focusDuration').value}:00`;
+        $('#startPomodoro').textContent = 'Start Focus';
+    }
+
+    function renderFocusStats() {
+        const today = fmt.today();
+        const todaySessions = state.focusSessions.filter(s => s.date === today && s.mode === 'focus');
+        const totalMinutes = todaySessions.reduce((sum, s) => sum + s.duration, 0);
+        
+        $('#sessionsCompleted').textContent = todaySessions.length;
+        $('#focusTime').textContent = `${totalMinutes}m`;
+    }
+
+    function renderFocusHistory() {
+        const history = $('#focusHistory');
+        const recent = [...state.focusSessions].slice(0, 7);
+        
+        history.innerHTML = recent.length ? recent.map(s => `
             <li>
                 <div style="flex:1">
-                    <div style="font-weight: 600;">${fmt.formatDateDisplay(j.date)} ${moodMap[j.mood] || ''}</div>
-                    <div class="muted">${j.text.slice(0, 100)}${j.text.length > 100 ? '...' : ''}</div>
+                    <div style="font-weight: 600;">${fmt.formatDateDisplay(s.date)} • ${s.mode === 'focus' ? 'Focus' : 'Break'}</div>
+                    <div class="muted">${fmt.formatTime(new Date(s.timestamp))} • ${s.duration} min</div>
                 </div>
             </li>
-        `).join('') : `<li style="opacity:1" class="muted">No recent journal entries.</li>`;
+        `).join('') : `<li style="opacity:1" class="muted">No focus sessions yet.</li>`;
+    }
+
+    // --- MODAL AND UTILITIES ---
+    function showJournalModal(date) {
+        const entry = state.journals.find(j => j.date === date);
+        if (!entry) return;
+
+        const moodMap = { 1: '😩', 2: '😐', 3: '🙂', 4: '😊', 5: '🤩' };
+        
+        // Create modal
+        const modalTpl = $('#journalModalTpl');
+        const modal = modalTpl.content.cloneNode(true);
+        document.body.appendChild(modal);
+        
+        const overlay = document.querySelector('.modal-overlay');
+        const content = overlay.querySelector('.modal-content');
+        
+        // Show timezone-aware time if stored
+        const tz = entry.tz || state.tz || Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const timeStr = entry.timeDisplay || (entry.datetime ? new Intl.DateTimeFormat('en-US', { timeZone: tz, hour:'2-digit', minute:'2-digit', hour12:true }).format(new Date(entry.datetime)) : '');
+        content.innerHTML = `
+            <div style="margin-bottom: 20px;">
+                <div style="font-size: 1.1em; margin-bottom: 8px; font-weight:700;">${fmt.formatDateDisplay(entry.date)} • ${timeStr} ${moodMap[entry.mood] || ''}</div>
+                <div style="white-space: pre-wrap; line-height: 1.6; margin-bottom:12px;">${entry.text}</div>
+            </div>
+        `;
+        
+        // Show modal with animation
+        requestAnimationFrame(() => overlay.classList.add('show'));
+        
+        // Close handlers
+        const close = () => {
+            overlay.classList.remove('show');
+            setTimeout(() => overlay.remove(), 300);
+        };
+        
+        overlay.querySelector('.modal-close').addEventListener('click', close);
+        const delBtn = overlay.querySelector('.modal-delete');
+        if (delBtn) {
+            delBtn.addEventListener('click', () => {
+                if (!confirm('Delete this journal entry?')) return;
+                state.journals = state.journals.filter(j => !(j.date === entry.date && j.datetime === entry.datetime));
+                saveData();
+                close();
+                renderJournalList();
+                showSuccess('Journal entry deleted');
+            });
+        }
+        overlay.addEventListener('click', e => {
+            if (e.target === overlay) close();
+        });
+    }
+
+    function quickSetDuration(mins) {
+        const input = $('#focusDuration');
+        input.value = mins;
+        resetPomodoro();
     }
 
     // --- INITIALIZATION ---
     function init() {
-      applyTheme(state.theme);
+        applyTheme(state.theme);
+        initTimezone();
+        updateClock();
 
-      onAuthStateChanged(auth, async (user) => {
-          // Hide loader once auth state is known
-          $('#loader').classList.add('hidden');
+        onAuthStateChanged(auth, async (user) => {
+            // Hide loader once auth state is known
+            $('#loader').classList.add('hidden');
 
-          if (user) {
-              // User is signed in
-              document.body.classList.add('logged-in');
-              state.user = user;
-              await loadData();
-              const hash = location.hash.replace('#', '');
-              navigate(routes.some(r => r.id === hash) ? hash : 'dashboard');
-          } else {
-              // User is signed out
-              document.body.classList.remove('logged-in');
-              state.user = null;
-              state.tasks = []; state.habits = []; state.journals = []; // Clear local state
-              $('#tabs').innerHTML = ''; // Clear tabs
-              mountAuth(); // Show the login screen
-          }
-      });
+            if (user) {
+                // User is signed in
+                document.body.classList.add('logged-in');
+                state.user = user;
+                await loadData();
+                const hash = location.hash.replace('#', '');
+                navigate(routes.some(r => r.id === hash) ? hash : 'dashboard');
+            } else {
+                // User is signed out
+                document.body.classList.remove('logged-in');
+                state.user = null;
+                state.tasks = []; state.habits = []; state.journals = []; state.focusSessions = []; // Clear local state
+                $('#tabs').innerHTML = ''; // Clear tabs
+                mountAuth(); // Show the login screen
+            }
+        });
     }
 
     // Run the app
     init();
 
-  </script>
-</body>
-</html>
+    // Expose certain helpers to window so inline handlers (if any) still work when module scope isn't global
+    window.quickSetDuration = quickSetDuration;
+    window.showJournalModal = showJournalModal;
+    window.updateClock = updateClock;
+   </script>
+ </body>
+ </html>
