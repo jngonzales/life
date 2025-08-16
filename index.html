@@ -836,7 +836,11 @@
         getFirestore, 
         doc, 
         getDoc, 
-        setDoc 
+        setDoc, 
+        updateDoc,
+        arrayUnion,
+        arrayRemove,
+        serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
     // --- FIREBASE CONFIGURATION ---
@@ -989,6 +993,14 @@
             state.journals = data.journals || [];
             state.focusSessions = data.focusSessions || [];
         } else {
+            // initialize empty user document to avoid later missing-doc errors
+            await setDoc(userDocRef, {
+                createdAt: serverTimestamp(),
+                tasks: [],
+                habits: [],
+                journals: [],
+                focusSessions: []
+            }, { merge: true });
             state.tasks = [];
             state.habits = [];
             state.journals = [];
@@ -999,12 +1011,14 @@
     async function saveData() {
         if (!state.user) return;
         const userDocRef = doc(db, 'users', state.user.uid);
+        // Use merge to avoid clobbering and add updatedAt timestamp
         await setDoc(userDocRef, {
             tasks: state.tasks,
             habits: state.habits,
             journals: state.journals,
-            focusSessions: state.focusSessions
-        });
+            focusSessions: state.focusSessions,
+            updatedAt: serverTimestamp()
+        }, { merge: true });
     }
 
     // --- THEME TOGGLE ---
@@ -1774,4 +1788,3 @@
    </script>
  </body>
  </html>
-
